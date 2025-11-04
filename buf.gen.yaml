@@ -1,0 +1,10 @@
+version: v2
+inputs:
+    - directory: protobuf
+plugins:
+    - local: protoc-gen-es
+      opt: target=ts
+      out: frontend/src/lib/gen
+    - local: protoc-gen-es
+      opt: target=ts
+      out: backend/src/controllers/gen

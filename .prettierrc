@@ -1,0 +1,7 @@
+{
+    "printWidth": 300,
+    "tabWidth": 4,
+    "useTabs": true,
+    "objectWrap": "collapse",
+    "bracketSameLine": true
+}

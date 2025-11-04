@@ -1,0 +1,39 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"globalEnv": [
+		"TOTPSECRET", "MAIL", "PASSWORD", "MONGOURI"
+	],
+	"ui": "stream",
+	"tasks": {
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"lint": {
+			"outputs": [],
+			"cache": true,
+			"persistent": false
+		},
+		"backend#build": {
+			"dependsOn": [
+				"frontend#build"
+			],
+			"outputs": [
+				"dist/**"
+			],
+			"cache": true,
+			"persistent": false
+		},
+		"frontend#build": {
+			"outputs": [
+				"../backend/src/views/gen/*"
+			],
+			"cache": true,
+			"persistent": false
+		},
+		"backend#preview": {
+			"cache": false,
+			"persistent": true
+		}
+	}
+}

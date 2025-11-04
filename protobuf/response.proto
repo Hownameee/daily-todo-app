@@ -1,0 +1,12 @@
+syntax = "proto3";
+package response;
+
+enum Status {
+    SUCCESS = 0;
+    FAILED = 1;
+}
+
+message Response {
+    Status status = 1;
+    string message = 2;
+}

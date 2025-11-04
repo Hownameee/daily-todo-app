@@ -1,0 +1,19 @@
+# Node.js dependencies
+node_modules/
+
+# Build output
+dist/
+.turbo/
+
+# Database
+app.db
+
+# Protobuf generated code
+gen/
+
+# Logs
+*.log
+logs/
+
+# Package manager lockfiles
+package-lock.json
