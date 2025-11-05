@@ -1,11 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { Models } from "../models/models";
 import Config from "../config/config";
-import fs from "fs-extra";
 
 function createErrorLog() {
-	const dirPath = "./logs";
-	fs.mkdirSync(dirPath, { recursive: true });
 	function logger(err: unknown, username: string | undefined) {
 		const date = new Date();
 		const hours = date.getHours();
@@ -21,14 +18,6 @@ function createErrorLog() {
 			console.error(`[${hours}:${minutes}:${seconds} - ${username ?? "unknown"}]:`);
 			console.error(err);
 		}
-
-		const filePath = dirPath + "/ErrorLogs";
-
-		fs.appendFile(filePath, `[${hours}:${minutes}:${seconds} - ${username ?? "unknown"}]: ${err}`, (fsErr) => {
-			if (fsErr) {
-				console.error(fsErr);
-			}
-		});
 	}
 	return logger;
 }
