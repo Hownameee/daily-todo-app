@@ -4,10 +4,10 @@ import Config from "../config/config";
 import fs from "fs-extra";
 
 function createErrorLog() {
-	const date = new Date();
 	const dirPath = "./logs";
-	fs.mkdir(dirPath, { recursive: true });
+	fs.mkdirSync(dirPath, { recursive: true });
 	function logger(err: unknown, username: string | undefined) {
+		const date = new Date();
 		const hours = date.getHours();
 		const minutes = date.getMinutes();
 		const seconds = date.getSeconds();
