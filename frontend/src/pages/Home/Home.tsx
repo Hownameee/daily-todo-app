@@ -115,7 +115,7 @@ function Home() {
 	}, []);
 
 	return (
-		<div className="flex justify-center items-start w-full h-full px-4 md:px-8 overflow-y-auto">
+		<div className="flex justify-center items-start w-full px-4 md:px-8">
 			<div className="w-full max-w-2xl p-6 md:p-8 bg-white/70 backdrop-blur-md rounded-xl shadow-lg border border-black/10">
 				<div className="flex justify-between items-center mb-6">
 					<h1 className="text-3xl font-bold text-gray-900">Todo List</h1>
@@ -154,13 +154,13 @@ function Home() {
 								<div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg group">
 									<input type="checkbox" checked={todo.completed} onChange={() => handleToggleComplete(todo)} className="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500" />
 
-									<span className={`grow text-gray-900 ${todo.completed ? "text-gray-500 opacity-40" : ""}`}>{todo.title}</span>
+									<span className={`grow text-gray-900 truncate ${todo.completed ? "text-gray-500 opacity-40" : ""}`}>{todo.title}</span>
 
-									<button onClick={() => handleStartEdit(todo)} className="p-2 rounded-md text-gray-600 hover:bg-gray-500/20 hover:text-gray-900 transition opacity-0 group-hover:opacity-100">
+									<button onClick={() => handleStartEdit(todo)} className="p-2 rounded-md text-gray-600 hover:bg-gray-500/20 hover:text-gray-900 transition opacity-30 group-hover:opacity-100">
 										<PencilIcon />
 									</button>
 
-									<button onClick={() => handleDeleteTodo(todo.uuid)} className="p-2 rounded-md text-red-500 hover:bg-red-500/20 hover:text-red-700 transition opacity-0 group-hover:opacity-100">
+									<button onClick={() => handleDeleteTodo(todo.uuid)} className="p-2 rounded-md text-red-500 hover:bg-red-500/20 hover:text-red-700 transition opacity-30 group-hover:opacity-100">
 										<TrashIcon />
 									</button>
 								</div>
