@@ -154,7 +154,7 @@ function Home() {
 								<div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg group">
 									<input type="checkbox" checked={todo.completed} onChange={() => handleToggleComplete(todo)} className="h-5 w-5 rounded text-indigo-600 focus:ring-indigo-500" />
 
-									<span className={`grow text-gray-900 ${todo.completed ? "line-through text-gray-500" : ""}`}>{todo.title}</span>
+									<span className={`grow text-gray-900 ${todo.completed ? "text-gray-500 opacity-40" : ""}`}>{todo.title}</span>
 
 									<button onClick={() => handleStartEdit(todo)} className="p-2 rounded-md text-gray-600 hover:bg-gray-500/20 hover:text-gray-900 transition opacity-0 group-hover:opacity-100">
 										<PencilIcon />
