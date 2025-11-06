@@ -99,7 +99,7 @@ export default function Signup() {
 						/>
 					</div>
 
-					<button type="submit" className="w-full py-3 mt-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400">
+					<button type="submit" className="w-full py-3 mt-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-pointer">
 						Sign Up
 					</button>
 				</form>
@@ -110,7 +110,7 @@ export default function Signup() {
 					<div className="grow border-t border-gray-500/30"></div>
 				</div>
 
-				<button onClick={() => navigate(loginUrl)} className="w-full py-3 rounded-lg bg-gray-500/20 text-gray-900 font-semibold hover:bg-gray-500/30 transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+				<button onClick={() => navigate(loginUrl)} className="w-full py-3 rounded-lg bg-gray-500/20 text-gray-900 font-semibold hover:bg-gray-500/30 transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer">
 					Login
 				</button>
 			</div>
