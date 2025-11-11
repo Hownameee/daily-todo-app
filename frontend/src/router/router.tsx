@@ -4,10 +4,10 @@ import Login from "../pages/Login/Login";
 import Background from "src/pages/Background";
 import Signup from "src/pages/Signup/Signup";
 import Layout from "src/pages/Layout";
-import { AuthLoader } from "./loader";
+import { AuthLoader, BackgroundLoader } from "./loader";
 
 export const router = createBrowserRouter([
-	{ path: "/", Component: Background, children: [{ Component: Layout, loader: AuthLoader, children: [{ index: true, Component: Home }] }] },
-	{ path: "/login", Component: Background, children: [{ index: true, Component: Login }] },
-	{ path: "/signup", Component: Background, children: [{ index: true, Component: Signup }] },
+	{ path: "/", Component: Background, loader: BackgroundLoader, children: [{ Component: Layout, loader: AuthLoader, children: [{ index: true, Component: Home }] }] },
+	{ path: "/login", Component: Background, loader: BackgroundLoader, children: [{ index: true, Component: Login }] },
+	{ path: "/signup", Component: Background, loader: BackgroundLoader, children: [{ index: true, Component: Signup }] },
 ]);
