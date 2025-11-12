@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { Status } from "src/lib/gen/response_pb";
 import { AddTaskRequestSchema, AddTaskResponseSchema, TaskListResponseSchema, type Task } from "src/lib/gen/todos_pb";
 import TaskList from "@components/TaskList";
-import SubmitButton from "@components/SubmitButton";
+import SubmitButtonSpinner from "@components/SubmitButtonSpinner";
 
 function Home() {
 	const navigate = useNavigate();
@@ -13,7 +13,7 @@ function Home() {
 
 	const handleLogout = async () => {
 		await fetch("/api/logout", { credentials: "include" });
-		await navigate("/login");
+		navigate("/login");
 	};
 
 	const handleAddTodo = async (formData: FormData) => {
@@ -51,15 +51,15 @@ function Home() {
 			<div className="w-full max-w-2xl p-6 md:p-8 bg-white/70 backdrop-blur-md rounded-xl shadow-lg border border-black/10 h-full overflow-y-hidden flex flex-col gap-6">
 				<div className="flex justify-between items-center">
 					<h1 className="text-3xl font-bold text-gray-900">Todo List</h1>
-					<button onClick={handleLogout} className="py-2 px-4 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition duration-300 shadow-md cursor-pointer">
-						Logout
-					</button>
+					<form action={handleLogout}>
+						<SubmitButtonSpinner value="Logout" className="py-2 px-4 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition duration-300 shadow-md cursor-pointer" />
+					</form>
 				</div>
 
 				<form action={handleAddTodo} className="flex gap-2">
 					<input type="text" name="task" placeholder="Add new task..." className="grow p-3 rounded-lg bg-white/50 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
 
-					<SubmitButton value="Add task" className="py-3 px-5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md cursor-pointer" />
+					<SubmitButtonSpinner value="Add" className="py-3 px-5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md cursor-pointer" />
 				</form>
 
 				<ul className="space-y-3 overflow-y-scroll [&::-webkit-scrollbar]:hidden flex-1 min-h-0 [mask:linear-gradient(to_bottom,black_95%,transparent_100%)]">

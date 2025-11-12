@@ -1,5 +1,5 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf";
-import SubmitButton from "@components/SubmitButton";
+import SubmitButton from "@components/SubmitButtonThreeDot";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { SignupRequestSchema, type SignupRequest } from "src/lib/gen/auth_pb";

@@ -1,9 +1,9 @@
-import { useState, type Dispatch, type FormEvent, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { RemoveTaskRequestSchema, TaskSchema, type Task } from "../gen/todos_pb";
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf";
 import { ResponseSchema, Status } from "../gen/response_pb";
 import { PencilIcon, TrashIcon } from "@assets/index";
-import SubmitButton from "./SubmitButton";
+import SubmitButtonSpinner from "./SubmitButtonSpinner";
 
 export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos: Dispatch<SetStateAction<Task[]>> }) {
 	const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
@@ -49,8 +49,7 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 		setEditingTodoTitle("");
 	};
 
-	const handleUpdateTodo = async (e: FormEvent<HTMLFormElement>, todo: Task) => {
-		e.preventDefault();
+	const handleUpdateTodo = async (todo: Task) => {
 		if (editingTodoTitle.trim() === "") {
 			return;
 		}
@@ -79,9 +78,9 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 				todos.map((todo) => (
 					<li key={todo.uuid}>
 						{editingTodoId === todo.uuid ? (
-							<form onSubmit={(e) => handleUpdateTodo(e, todo)} className="flex gap-2 p-3 bg-white/40 rounded-lg">
+							<form action={() => handleUpdateTodo(todo)} className="flex gap-2 p-3 bg-white/40 rounded-lg">
 								<input type="text" value={editingTodoTitle} onChange={(e) => setEditingTodoTitle(e.target.value)} className="grow p-2 rounded-lg bg-white/50 border border-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" autoFocus />
-								<SubmitButton value="Save" className="p-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition" />
+								<SubmitButtonSpinner value="Save" className="p-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition" />
 								<button type="button" onClick={handleCancelEdit} className="p-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500 transition">
 									Cancel
 								</button>
