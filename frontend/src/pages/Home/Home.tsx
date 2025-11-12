@@ -1,28 +1,29 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Status } from "src/lib/gen/response_pb";
 import { AddTaskRequestSchema, AddTaskResponseSchema, TaskListResponseSchema, type Task } from "src/lib/gen/todos_pb";
 import TaskList from "@components/TaskList";
+import SubmitButton from "@components/SubmitButton";
 
 function Home() {
 	const navigate = useNavigate();
 
 	const [todos, setTodos] = useState<Task[]>([]);
-	const [newTodoTitle, setNewTodoTitle] = useState<string>("");
 
 	const handleLogout = async () => {
 		await fetch("/api/logout", { credentials: "include" });
 		await navigate("/login");
 	};
 
-	const handleAddTodo = async (e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		if (newTodoTitle.trim() === "") {
+	const handleAddTodo = async (formData: FormData) => {
+		const taskForm = formData.get("task")?.toString();
+
+		if (!taskForm || taskForm.trim() === "") {
 			return;
 		}
 
-		const task = create(AddTaskRequestSchema, { title: newTodoTitle });
+		const task = create(AddTaskRequestSchema, { title: taskForm });
 		const bytes = toBinary(AddTaskRequestSchema, task);
 		const res = await fetch("/api/todos", { headers: { "Content-Type": "application/x-protobuf" }, method: "POST", credentials: "include", body: bytes });
 
@@ -32,7 +33,6 @@ function Home() {
 		if (newTask.status == Status.SUCCESS && newTask.newTask) {
 			setTodos([newTask.newTask, ...todos]);
 		}
-		setNewTodoTitle("");
 	};
 
 	useEffect(() => {
@@ -56,18 +56,10 @@ function Home() {
 					</button>
 				</div>
 
-				<form onSubmit={handleAddTodo} className="flex gap-2">
-					<input
-						type="text"
-						value={newTodoTitle}
-						onChange={(e) => setNewTodoTitle(e.target.value)}
-						placeholder="Add new task..."
-						className="grow p-3 rounded-lg bg-white/50 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-						required
-					/>
-					<button type="submit" className="py-3 px-5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md cursor-pointer">
-						Add
-					</button>
+				<form action={handleAddTodo} className="flex gap-2">
+					<input type="text" name="task" placeholder="Add new task..." className="grow p-3 rounded-lg bg-white/50 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+
+					<SubmitButton value="Add task" className="py-3 px-5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md cursor-pointer" />
 				</form>
 
 				<ul className="space-y-3 overflow-y-scroll [&::-webkit-scrollbar]:hidden flex-1 min-h-0 [mask:linear-gradient(to_bottom,black_95%,transparent_100%)]">

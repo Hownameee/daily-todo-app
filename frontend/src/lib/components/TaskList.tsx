@@ -3,6 +3,7 @@ import { RemoveTaskRequestSchema, TaskSchema, type Task } from "../gen/todos_pb"
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf";
 import { ResponseSchema, Status } from "../gen/response_pb";
 import { PencilIcon, TrashIcon } from "@assets/index";
+import SubmitButton from "./SubmitButton";
 
 export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos: Dispatch<SetStateAction<Task[]>> }) {
 	const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
@@ -80,9 +81,7 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 						{editingTodoId === todo.uuid ? (
 							<form onSubmit={(e) => handleUpdateTodo(e, todo)} className="flex gap-2 p-3 bg-white/40 rounded-lg">
 								<input type="text" value={editingTodoTitle} onChange={(e) => setEditingTodoTitle(e.target.value)} className="grow p-2 rounded-lg bg-white/50 border border-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" autoFocus />
-								<button type="submit" className="p-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition">
-									Save
-								</button>
+								<SubmitButton value="Save" className="p-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition" />
 								<button type="button" onClick={handleCancelEdit} className="p-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500 transition">
 									Cancel
 								</button>

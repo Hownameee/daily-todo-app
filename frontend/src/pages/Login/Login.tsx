@@ -1,5 +1,6 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf";
-import { useState, type FormEvent } from "react";
+import SubmitButton from "@components/SubmitButton";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { LoginRequestSchema, type LoginRequest } from "src/lib/gen/auth_pb";
 import { ResponseSchema, Status } from "src/lib/gen/response_pb";
@@ -11,12 +12,16 @@ export default function Login() {
 	const signupUrl = redirectTo && redirectTo !== "/" ? `/signup?redirect=${encodeURIComponent(redirectTo)}` : "/signup";
 
 	const [errorMessage, setErrorMessage] = useState<string>("");
-	const [username, setUsername] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
 
-	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const login: LoginRequest = create(LoginRequestSchema, { username: username, password: password });
+	const handleSubmit = async (formData: FormData) => {
+		const username = formData.get("username");
+		const password = formData.get("password");
+
+		if (!username || !password) {
+			return;
+		}
+
+		const login: LoginRequest = create(LoginRequestSchema, { username: username.toString(), password: password.toString() });
 		const bytes = toBinary(LoginRequestSchema, login);
 
 		try {
@@ -42,44 +47,22 @@ export default function Login() {
 
 				{!(errorMessage === "") && <div className="p-3 mb-4 text-center text-red-700 bg-red-200/50 rounded-lg">{errorMessage}</div>}
 
-				<form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-5">
+				<form action={handleSubmit} className="flex flex-col gap-5">
 					<div>
 						<label className="block text-gray-800 text-sm font-medium mb-2" htmlFor="username">
 							Username
 						</label>
-						<input
-							type="text"
-							id="username"
-							name="username"
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
-							required
-							className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-							placeholder="Enter your name"
-						/>
+						<input type="text" id="username" name="username" required className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your name" />
 					</div>
 
 					<div>
 						<label className="block text-gray-800 text-sm font-medium mb-2" htmlFor="password">
 							Password
 						</label>
-						<input
-							type="password"
-							id="password"
-							name="password"
-							value={password}
-							onChange={(e) => {
-								setPassword(e.target.value);
-							}}
-							required
-							className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-							placeholder="Enter your password"
-						/>
+						<input type="password" id="password" name="password" required className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your password" />
 					</div>
 
-					<button type="submit" className="w-full py-3 mt-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-pointer">
-						Login
-					</button>
+					<SubmitButton value="Login" className="w-full py-3 mt-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-pointer" />
 				</form>
 
 				<div className="my-6 flex items-center">

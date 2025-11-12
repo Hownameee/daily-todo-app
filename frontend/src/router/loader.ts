@@ -19,7 +19,7 @@ export async function AuthLoader({ request }: { request: Request }) {
 
 export async function BackgroundLoader() {
 	await new Promise((resolve) => {
-		setTimeout(resolve, 300);
+		setTimeout(resolve, 150);
 	});
 	return null;
 }
