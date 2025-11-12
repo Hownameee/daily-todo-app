@@ -5,11 +5,13 @@ import { Status } from "src/lib/gen/response_pb";
 import { AddTaskRequestSchema, AddTaskResponseSchema, TaskListResponseSchema, type Task } from "src/lib/gen/todos_pb";
 import TaskList from "@components/TaskList";
 import SubmitButtonSpinner from "@components/SubmitButtonSpinner";
+import { Atom } from "react-loading-indicators";
 
 function Home() {
 	const navigate = useNavigate();
 
 	const [todos, setTodos] = useState<Task[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
 
 	const handleLogout = async () => {
 		await fetch("/api/logout", { credentials: "include" });
@@ -40,6 +42,7 @@ function Home() {
 			const res = await fetch("/api/todos", { credentials: "include" });
 			const data = await res.arrayBuffer();
 			const todos = fromBinary(TaskListResponseSchema, new Uint8Array(data));
+			setLoading(false);
 			setTodos(todos.list);
 		};
 
@@ -63,7 +66,13 @@ function Home() {
 				</form>
 
 				<ul className="space-y-3 overflow-y-scroll [&::-webkit-scrollbar]:hidden flex-1 min-h-0 [mask:linear-gradient(to_bottom,black_95%,transparent_100%)]">
-					<TaskList todos={todos} setTodos={setTodos}></TaskList>
+					{loading ? (
+						<li className="flex justify-center items-center h-full">
+							<Atom color={["#32cd32", "#327fcd", "#cd32cd", "#cd8032"]} speedPlus={1} size="large" text="" textColor="" easing="ease-in-out" />
+						</li>
+					) : (
+						<TaskList todos={todos} setTodos={setTodos}></TaskList>
+					)}
 				</ul>
 			</div>
 		</div>
