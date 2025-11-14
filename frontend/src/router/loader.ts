@@ -17,7 +17,7 @@ export async function AuthLoader({ request }: { request: Request }) {
 	return result.username;
 }
 
-export async function BackgroundLoader() {
+export async function AnimationLoader() {
 	await new Promise((resolve) => {
 		setTimeout(resolve, 150);
 	});

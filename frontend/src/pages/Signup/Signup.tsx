@@ -6,11 +6,16 @@ import { SignupRequestSchema, type SignupRequest } from "src/lib/gen/auth_pb";
 import { ResponseSchema, Status } from "src/lib/gen/response_pb";
 
 export default function Signup() {
+	// console.log("signup-re-render");
+
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
 	const redirectTo = searchParams.get("redirect") || "/";
 	const loginUrl = redirectTo && redirectTo !== "/" ? `/login?redirect=${encodeURIComponent(redirectTo)}` : "/login";
 
+	const [username, setUsername] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const [confirmPassword, setConfirmPassword] = useState<string>("");
 	const [errorMessage, setErrorMessage] = useState<string>("");
 
 	const handleSubmit = async (formData: FormData) => {
@@ -56,21 +61,57 @@ export default function Signup() {
 						<label className="block text-gray-800 text-sm font-medium mb-2" htmlFor="username">
 							Username
 						</label>
-						<input type="text" id="username" name="username" required className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your name" />
+						<input
+							value={username}
+							onChange={(e) => {
+								setUsername(e.target.value);
+								setErrorMessage("");
+							}}
+							type="text"
+							id="username"
+							name="username"
+							required
+							className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							placeholder="Enter your name"
+						/>
 					</div>
 
 					<div>
 						<label className="block text-gray-800 text-sm font-medium mb-2" htmlFor="password">
 							Password
 						</label>
-						<input type="password" id="password" name="password" required className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter your password" />
+						<input
+							value={password}
+							onChange={(e) => {
+								setPassword(e.target.value);
+								setErrorMessage("");
+							}}
+							type="password"
+							id="password"
+							name="password"
+							required
+							className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							placeholder="Enter your password"
+						/>
 					</div>
 
 					<div>
 						<label className="block text-gray-800 text-sm font-medium mb-2" htmlFor="confirmPassword">
 							Confirm Password
 						</label>
-						<input type="password" id="confirmPassword" name="confirmPassword" required className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Re-enter your password" />
+						<input
+							value={confirmPassword}
+							onChange={(e) => {
+								setConfirmPassword(e.target.value);
+								setErrorMessage("");
+							}}
+							type="password"
+							id="confirmPassword"
+							name="confirmPassword"
+							required
+							className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							placeholder="Re-enter your password"
+						/>
 					</div>
 
 					<SubmitButton value="Sign up" className="w-full py-3 mt-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-pointer" />
