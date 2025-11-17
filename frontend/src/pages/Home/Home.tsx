@@ -65,19 +65,19 @@ function Home() {
 	}, [todos, filter]);
 
 	return (
-		<div className="flex justify-center items-start w-full px-4 md:px-8 h-4/5">
-			<div className="w-full max-w-2xl p-6 md:p-8 bg-white/70 backdrop-blur-md rounded-xl shadow-lg border border-black/10 h-full overflow-y-hidden flex flex-col gap-6">
-				<div className="flex justify-between items-center">
-					<h1 className="text-3xl font-bold text-gray-900">Todo List</h1>
+		<main className="flex justify-center items-start w-full px-4 md:px-8 flex-1 pb-8 min-h-0">
+			<div className="w-full max-w-2xl p-4 sm:p-6 md:p-8 bg-white/70 backdrop-blur-md rounded-xl shadow-lg border border-black/10 flex flex-col gap-5 h-full overflow-y-hidden">
+				<div className="flex justify-between items-center flex-wrap gap-2">
+					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Todo List</h1>
 					<form action={handleLogout}>
-						<SubmitButtonSpinner value="Logout" className="py-2 px-4 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition duration-300 shadow-md cursor-pointer" />
+						<SubmitButtonSpinner value="Logout" className="py-2 px-4 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition duration-300 shadow-md cursor-pointer relative text-sm sm:text-base" />
 					</form>
 				</div>
 
-				<form action={handleAddTodo} className="flex gap-2">
-					<input type="text" name="task" placeholder="Add new task..." className="grow p-3 rounded-lg bg-white/50 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+				<form action={handleAddTodo} className="flex flex-col sm:flex-row gap-2">
+					<input type="text" name="task" placeholder="Add new task..." className="w-full sm:grow p-3 rounded-lg bg-white/50 border border-gray-300/50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required />
 
-					<SubmitButtonSpinner value="Add" className="py-3 px-5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md cursor-pointer" />
+					<SubmitButtonSpinner value="Add" className="w-full sm:w-auto py-3 px-5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md cursor-pointer relative text-sm sm:text-base" />
 				</form>
 				<div className="flex w-full gap-2 p-1 bg-gray-500/10 rounded-lg">
 					<button
@@ -102,7 +102,7 @@ function Home() {
 						Done
 					</button>
 				</div>
-				<ul className="space-y-3 overflow-y-scroll [&::-webkit-scrollbar]:hidden flex-1 min-h-0 [mask:linear-gradient(to_bottom,black_95%,transparent_100%)]">
+				<ul className="space-y-3 flex-1 min-h-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [mask:linear-gradient(to_bottom,black_95%,transparent_100%)]">
 					{loading ? (
 						<li className="flex justify-center items-center h-full">
 							<Atom color={["#32cd32", "#327fcd", "#cd32cd", "#cd8032"]} speedPlus={1} size="large" text="" textColor="" easing="ease-in-out" />
@@ -112,7 +112,7 @@ function Home() {
 					)}
 				</ul>
 			</div>
-		</div>
+		</main>
 	);
 }
 

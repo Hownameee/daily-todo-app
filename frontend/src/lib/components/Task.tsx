@@ -51,7 +51,7 @@ function TaskItem({ todo, index, onDelete, onToggle, onUpdate }: TodoItemProps) 
 				<div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg group">
 					<span className={`grow text-gray-900 truncate ${todo.completed ? "text-gray-500 opacity-60" : ""}`}>
 						<span className={`${todo.completed ? "text-green-400" : "text-red-400"}`}>{"T" + (index + 1) + ": "}</span>
-						{todo.title}
+						<span title={todo.title}>{todo.title}</span>
 					</span>
 					<button
 						onClick={() => onToggle(todo)}
