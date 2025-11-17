@@ -91,7 +91,7 @@ function Home() {
 		<main className="flex justify-center items-start w-full px-4 md:px-8 flex-1 pb-8 min-h-0">
 			<div className="w-full max-w-2xl p-4 sm:p-6 md:p-8 bg-white/70 backdrop-blur-md rounded-xl shadow-lg border border-black/10 flex flex-col gap-5 h-full overflow-y-hidden">
 				<div className="flex justify-between items-center flex-wrap gap-2">
-					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Todo List</h1>
+					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Daily Todo List</h1>
 					<form action={handleLogout}>
 						<SubmitButtonSpinner value="Logout" className="py-2 px-4 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition duration-300 shadow-md cursor-pointer relative text-sm sm:text-base" />
 					</form>
