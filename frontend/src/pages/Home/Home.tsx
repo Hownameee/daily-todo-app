@@ -9,6 +9,20 @@ import { Atom } from "react-loading-indicators";
 
 type FilterState = "all" | "not done" | "done";
 
+function calculateRemainingTime() {
+	const now = new Date();
+	const midnight = new Date();
+	midnight.setHours(24, 0, 0, 0);
+
+	const diff = midnight.getTime() - now.getTime();
+
+	const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
+	const minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0");
+	const seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, "0");
+
+	return `${hours}:${minutes}:${seconds}`;
+}
+
 function Home() {
 	// console.log("home-re-render");
 
@@ -17,6 +31,7 @@ function Home() {
 	const [todos, setTodos] = useState<Task[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [filter, setFilter] = useState<FilterState>("all");
+	const [remainingTime, setRemainingTime] = useState(calculateRemainingTime());
 
 	const handleLogout = async () => {
 		await fetch("/api/logout", { credentials: "include" });
@@ -54,6 +69,14 @@ function Home() {
 		fetchTodos();
 	}, []);
 
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			setRemainingTime(calculateRemainingTime());
+		}, 1000);
+
+		return () => clearInterval(intervalId);
+	}, []);
+
 	const filteredTodos = useMemo(() => {
 		if (filter === "done") {
 			return todos.filter((task) => task.completed);
@@ -79,6 +102,11 @@ function Home() {
 
 					<SubmitButtonSpinner value="Add" className="w-full sm:w-auto py-3 px-5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md cursor-pointer relative text-sm sm:text-base" />
 				</form>
+				{todos.length > 0 ? (
+					<div className="text-center shrink-0 text-xs text-gray-500 font-mono" title="Time remaining today">
+						Time remaining: {remainingTime}
+					</div>
+				) : null}
 				<div className="flex w-full gap-2 p-1 bg-gray-500/10 rounded-lg">
 					<button
 						type="button"
