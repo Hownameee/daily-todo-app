@@ -1,9 +1,12 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf";
-import SubmitButton from "@components/SubmitButtonThreeDot";
+import SubmitButtonFormData from "@components/SubmitButtonFormData";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router";
 import { LoginRequestSchema, type LoginRequest } from "src/lib/gen/auth_pb";
 import { ResponseSchema, Status } from "src/lib/gen/response_pb";
+import { loginSchema, type LoginFormData } from "src/lib/schema/LoginSchema";
 
 export default function Login() {
 	// console.log("login-re-render");
@@ -13,24 +16,19 @@ export default function Login() {
 	const redirectTo = searchParams.get("redirect") || "/";
 	const signupUrl = redirectTo && redirectTo !== "/" ? `/signup?redirect=${encodeURIComponent(redirectTo)}` : "/signup";
 
-	const [username, setUsername] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+	} = useForm<LoginFormData>({ resolver: zodResolver(loginSchema), mode: "onBlur" });
 	const [errorMessage, setErrorMessage] = useState<string>("");
 
-	const handleSubmit = async (formData: FormData) => {
-		const username = formData.get("username");
-		const password = formData.get("password");
-
-		if (!username || !password) {
-			return;
-		}
-
-		const login: LoginRequest = create(LoginRequestSchema, { username: username.toString(), password: password.toString() });
+	const handleLogin = async (data: LoginFormData) => {
+		setErrorMessage("");
+		const login: LoginRequest = create(LoginRequestSchema, { username: data.username, password: data.password });
 		const bytes = toBinary(LoginRequestSchema, login);
-
 		try {
 			const res = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/x-protobuf" }, body: bytes });
-
 			const data = await res.arrayBuffer();
 			const result = fromBinary(ResponseSchema, new Uint8Array(data));
 
@@ -51,24 +49,20 @@ export default function Login() {
 
 				{!(errorMessage === "") && <div className="p-3 mb-4 text-center text-red-700 bg-red-200/50 rounded-lg">{errorMessage}</div>}
 
-				<form action={handleSubmit} className="flex flex-col gap-5">
+				<form onSubmit={handleSubmit(handleLogin)} className="flex flex-col gap-5">
 					<div>
 						<label className="block text-gray-800 text-sm font-medium mb-2" htmlFor="username">
 							Username
 						</label>
 						<input
-							value={username}
-							onChange={(e) => {
-								setUsername(e.target.value);
-								setErrorMessage("");
-							}}
 							type="text"
 							id="username"
-							name="username"
 							required
-							className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							className={`w-full p-3 rounded-lg bg-white/20 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 border-2 ${errors.username ? "border-red-500" : "border-transparent"} focus:border-transparent`}
 							placeholder="Enter your name"
+							{...register("username")}
 						/>
+						{errors.username && <p className="text-red-600 text-sm py-2">{errors.username.message}</p>}
 					</div>
 
 					<div>
@@ -76,21 +70,17 @@ export default function Login() {
 							Password
 						</label>
 						<input
-							value={password}
-							onChange={(e) => {
-								setPassword(e.target.value);
-								setErrorMessage("");
-							}}
 							type="password"
 							id="password"
-							name="password"
 							required
-							className="w-full p-3 rounded-lg bg-white/20 border border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							className={`w-full p-3 rounded-lg bg-white/20 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 border-2 ${errors.password ? "border-red-500" : "border-transparent"} focus:border-transparent`}
 							placeholder="Enter your password"
+							{...register("password")}
 						/>
+						{errors.password && <p className="text-red-600 text-sm py-2">{errors.password.message}</p>}
 					</div>
 
-					<SubmitButton value="Login" className="w-full py-3 mt-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-pointer" />
+					<SubmitButtonFormData isLoading={isSubmitting} value="Login" className="w-full py-3 mt-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-pointer" />
 				</form>
 
 				<div className="my-6 flex items-center">

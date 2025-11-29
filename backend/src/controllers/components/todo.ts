@@ -4,11 +4,15 @@ import { create, fromBinary } from "@bufbuild/protobuf";
 import { sendProto } from "./helper";
 import { ResponseSchema, Status } from "../gen/response_pb";
 import { AddTaskRequestSchema, AddTaskResponseSchema, RemoveTaskRequestSchema, TaskListResponseSchema, TaskSchema } from "../gen/todos_pb";
+import { checkRemoveTaskConstraint, checkTaskConstraint, checkUpdateTaskConstraint } from "./validate";
 
 Controllers.prototype.handleAddTask = async function (req: Request, res: Response) {
 	try {
 		const username = res.locals.user;
 		const data = fromBinary(AddTaskRequestSchema, req.body);
+		if (!checkTaskConstraint(res, data.title)) {
+			return;
+		}
 
 		const result = await this.models.insertTaskByUsername(username, data.title);
 		if (result) {
@@ -42,6 +46,10 @@ Controllers.prototype.handleRemoveTask = async function (req: Request, res: Resp
 		const username = res.locals.user;
 		const data = fromBinary(RemoveTaskRequestSchema, req.body);
 
+		if (!checkRemoveTaskConstraint(res, data.uuid)) {
+			return;
+		}
+
 		const result = await this.models.removeTaskByUsername(username, data.uuid);
 
 		if (result) {
@@ -60,8 +68,11 @@ Controllers.prototype.handleUpdateTask = async function (req: Request, res: Resp
 		const username = res.locals.user;
 		const data = fromBinary(TaskSchema, req.body);
 
-		const result = await this.models.updateTaskByUsername(username, data);
+		if (!checkUpdateTaskConstraint(res, data.uuid, data.completed, data.title)) {
+			return;
+		}
 
+		const result = await this.models.updateTaskByUsername(username, data);
 		if (result) {
 			sendProto(res, ResponseSchema, create(ResponseSchema, { status: Status.SUCCESS, message: "" }));
 		} else {

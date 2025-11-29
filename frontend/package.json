@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@bufbuild/protobuf": "^2.5.2",
+		"@hookform/resolvers": "^5.2.2",
 		"react": "^19.1.1",
 		"react-dom": "^19.1.1",
 		"react-loading-indicators": "^1.0.1",

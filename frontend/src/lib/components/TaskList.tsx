@@ -18,6 +18,9 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 			if (status.status == Status.SUCCESS) {
 				setTodos((prevTodos) => prevTodos.filter((todo) => todo.uuid !== uuid));
 			}
+			if (status.status == Status.FAILED) {
+				alert(status.message);
+			}
 		},
 		[setTodos],
 	);
@@ -36,6 +39,9 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 						return e.uuid === todo.uuid ? { ...e, completed: !e.completed } : e;
 					}),
 				);
+			}
+			if (status.status == Status.FAILED) {
+				alert(status.message);
 			}
 		},
 		[setTodos],
@@ -60,6 +66,9 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 							return e.uuid === todo.uuid ? { ...e, title: newTitle } : e;
 						}),
 					);
+				}
+				if (status.status == Status.FAILED) {
+					alert(status.message);
 				}
 			} catch (error) {
 				console.error("Failed to update todo:", error);

@@ -7,6 +7,7 @@ import { Controllers } from "../controllers";
 import * as helper from "./helper";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { MongoServerError } from "mongodb";
+import { checkUserConstraint } from "./validate";
 
 Controllers.prototype.setAuthentication = function (res: Response, username: string) {
 	const token = jwt.sign({ username: username }, this.config.jwtSecret, { expiresIn: "24h" });
@@ -40,6 +41,9 @@ Controllers.prototype.handleSignout = async function (req: Request, res: Respons
 Controllers.prototype.handleSignin = async function (this: Controllers, req: Request, res: Response) {
 	try {
 		const data = fromBinary(LoginRequestSchema, req.body);
+		if (!checkUserConstraint(res, data.username, data.password)) {
+			return;
+		}
 		const result = await this.models.selectPasswordByUsername(data.username);
 		if (result) {
 			if (await verify(result, data.password)) {
@@ -61,10 +65,7 @@ Controllers.prototype.handleSignup = async function (req: Request, res: Response
 	try {
 		const data = fromBinary(SignupRequestSchema, req.body);
 
-		if (!helper.checkUsernameConstraint(res, data.username)) {
-			return;
-		}
-		if (!helper.checkPasswordConstraint(res, data.password)) {
+		if (!checkUserConstraint(res, data.username, data.password)) {
 			return;
 		}
 		const hashed = await hash(data.password);
