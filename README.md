@@ -52,7 +52,7 @@ npm run dev
 - Frontend: <http://localhost:3000>
 - Backend: <http://localhost:4000>
 
-1. Configuration create backend/.env with your MongoDB credentials:
+2. Configuration create backend/.env with your MongoDB credentials:
 
 ```bash
 MONGOURI=mongodb+srv://user:pass@cluster.mongodb.net/db?w=majority
