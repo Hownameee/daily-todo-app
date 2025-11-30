@@ -1,7 +1,7 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"globalEnv": [
-		"TOTPSECRET", "MAIL", "PASSWORD", "MONGOURI"
+		"MONGOURI"
 	],
 	"ui": "stream",
 	"tasks": {
