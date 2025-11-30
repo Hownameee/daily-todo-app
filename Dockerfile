@@ -2,7 +2,7 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY . .
-RUN npm i
+RUN npm i --ignore-scripts
 RUN npm run build
 RUN npm install --omit=dev --ignore-scripts
 
