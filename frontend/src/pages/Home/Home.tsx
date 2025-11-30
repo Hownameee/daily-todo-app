@@ -34,8 +34,12 @@ function Home() {
 	const [remainingTime, setRemainingTime] = useState(calculateRemainingTime());
 
 	const handleLogout = async () => {
-		await fetch("/api/logout", { credentials: "include" });
-		navigate("/login");
+		try {
+			await fetch("/api/logout", { credentials: "include" });
+			navigate("/login");
+		} catch {
+			alert("Internal server error, please try again.");
+		}
 	};
 
 	const handleAddTodo = async (formData: FormData) => {
@@ -44,26 +48,33 @@ function Home() {
 		if (!taskForm || taskForm.trim() === "") {
 			return;
 		}
+		try {
+			const task = create(AddTaskRequestSchema, { title: taskForm });
+			const bytes = toBinary(AddTaskRequestSchema, task);
+			const res = await fetch("/api/todos", { headers: { "Content-Type": "application/x-protobuf" }, method: "POST", credentials: "include", body: bytes });
 
-		const task = create(AddTaskRequestSchema, { title: taskForm });
-		const bytes = toBinary(AddTaskRequestSchema, task);
-		const res = await fetch("/api/todos", { headers: { "Content-Type": "application/x-protobuf" }, method: "POST", credentials: "include", body: bytes });
+			const data = await res.arrayBuffer();
+			const newTask = fromBinary(AddTaskResponseSchema, new Uint8Array(data));
 
-		const data = await res.arrayBuffer();
-		const newTask = fromBinary(AddTaskResponseSchema, new Uint8Array(data));
-
-		if (newTask.status == Status.SUCCESS && newTask.newTask) {
-			setTodos([newTask.newTask, ...todos]);
+			if (newTask.status == Status.SUCCESS && newTask.newTask) {
+				setTodos([newTask.newTask, ...todos]);
+			}
+		} catch {
+			alert("Internal server error, please try again.");
 		}
 	};
 
 	useEffect(() => {
 		const fetchTodos = async () => {
-			const res = await fetch("/api/todos", { credentials: "include" });
-			const data = await res.arrayBuffer();
-			const todos = fromBinary(TaskListResponseSchema, new Uint8Array(data));
-			setLoading(false);
-			setTodos(todos.list);
+			try {
+				const res = await fetch("/api/todos", { credentials: "include" });
+				const data = await res.arrayBuffer();
+				const todos = fromBinary(TaskListResponseSchema, new Uint8Array(data));
+				setLoading(false);
+				setTodos(todos.list);
+			} catch {
+				alert("Internal server error, please try again.");
+			}
 		};
 
 		fetchTodos();

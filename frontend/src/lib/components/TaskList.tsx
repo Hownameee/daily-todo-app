@@ -9,17 +9,21 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 
 	const handleDeleteTodo = useCallback(
 		async (uuid: string) => {
-			const id = create(RemoveTaskRequestSchema, { uuid: uuid });
-			const bytes = toBinary(RemoveTaskRequestSchema, id);
-			const res = await fetch("/api/todos", { credentials: "include", method: "DELETE", body: bytes, headers: { "Content-Type": "application/x-protobuf" } });
+			try {
+				const id = create(RemoveTaskRequestSchema, { uuid: uuid });
+				const bytes = toBinary(RemoveTaskRequestSchema, id);
+				const res = await fetch("/api/todos", { credentials: "include", method: "DELETE", body: bytes, headers: { "Content-Type": "application/x-protobuf" } });
 
-			const data = await res.arrayBuffer();
-			const status = fromBinary(ResponseSchema, new Uint8Array(data));
-			if (status.status == Status.SUCCESS) {
-				setTodos((prevTodos) => prevTodos.filter((todo) => todo.uuid !== uuid));
-			}
-			if (status.status == Status.FAILED) {
-				alert(status.message);
+				const data = await res.arrayBuffer();
+				const status = fromBinary(ResponseSchema, new Uint8Array(data));
+				if (status.status == Status.SUCCESS) {
+					setTodos((prevTodos) => prevTodos.filter((todo) => todo.uuid !== uuid));
+				}
+				if (status.status == Status.FAILED) {
+					alert(status.message);
+				}
+			} catch {
+				alert("Internal server error, please try again.");
 			}
 		},
 		[setTodos],
@@ -27,21 +31,25 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 
 	const handleToggleComplete = useCallback(
 		async (todo: Task) => {
-			const updateTask = create(TaskSchema, { uuid: todo.uuid, title: todo.title, completed: !todo.completed });
-			const bytes = toBinary(TaskSchema, updateTask);
-			const res = await fetch("/api/todos", { credentials: "include", method: "PUT", body: bytes, headers: { "Content-Type": "application/x-protobuf" } });
+			try {
+				const updateTask = create(TaskSchema, { uuid: todo.uuid, title: todo.title, completed: !todo.completed });
+				const bytes = toBinary(TaskSchema, updateTask);
+				const res = await fetch("/api/todos", { credentials: "include", method: "PUT", body: bytes, headers: { "Content-Type": "application/x-protobuf" } });
 
-			const data = await res.arrayBuffer();
-			const status = fromBinary(ResponseSchema, new Uint8Array(data));
-			if (status.status == Status.SUCCESS) {
-				setTodos((prevTodos) =>
-					prevTodos.map((e) => {
-						return e.uuid === todo.uuid ? { ...e, completed: !e.completed } : e;
-					}),
-				);
-			}
-			if (status.status == Status.FAILED) {
-				alert(status.message);
+				const data = await res.arrayBuffer();
+				const status = fromBinary(ResponseSchema, new Uint8Array(data));
+				if (status.status == Status.SUCCESS) {
+					setTodos((prevTodos) =>
+						prevTodos.map((e) => {
+							return e.uuid === todo.uuid ? { ...e, completed: !e.completed } : e;
+						}),
+					);
+				}
+				if (status.status == Status.FAILED) {
+					alert(status.message);
+				}
+			} catch {
+				alert("Internal server error, please try again.");
 			}
 		},
 		[setTodos],
