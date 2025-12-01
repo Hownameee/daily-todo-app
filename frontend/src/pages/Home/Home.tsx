@@ -5,7 +5,7 @@ import { Status } from "src/lib/gen/response_pb";
 import { AddTaskRequestSchema, AddTaskResponseSchema, TaskListResponseSchema, type Task } from "src/lib/gen/todos_pb";
 import TaskList from "@components/TaskList";
 import SubmitButtonSpinner from "@components/SubmitButtonSpinner";
-import { Atom } from "react-loading-indicators";
+import { TrophySpin } from "react-loading-indicators";
 
 type FilterState = "all" | "not done" | "done";
 
@@ -55,9 +55,11 @@ function Home() {
 
 			const data = await res.arrayBuffer();
 			const newTask = fromBinary(AddTaskResponseSchema, new Uint8Array(data));
-
 			if (newTask.status == Status.SUCCESS && newTask.newTask) {
 				setTodos([newTask.newTask, ...todos]);
+			} else if (newTask.status == Status.FAILED) {
+				alert(newTask.message);
+				return;
 			}
 		} catch {
 			alert("Internal server error, please try again.");
@@ -100,51 +102,66 @@ function Home() {
 
 	return (
 		<main className="flex justify-center items-start w-full px-4 md:px-8 flex-1 pb-8 min-h-0">
-			<div className="w-full max-w-2xl p-4 sm:p-6 md:p-8 bg-white/70 backdrop-blur-md rounded-xl shadow-lg border border-black/10 flex flex-col gap-5 h-full overflow-y-hidden">
-				<div className="flex justify-between items-center flex-wrap gap-2">
-					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Daily Todo List</h1>
+			<div className="w-full max-w-2xl p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 flex flex-col gap-5 h-full overflow-y-hidden ring-1 ring-white/5 animate-fade-in-up">
+				<div className="flex justify-between items-center flex-wrap gap-2 border-b border-white/10 pb-4">
+					<h1 className="text-2xl sm:text-3xl font-bold text-white tracking-wide drop-shadow-md">Daily Todo List</h1>
 					<form action={handleLogout}>
-						<SubmitButtonSpinner value="Logout" className="py-2 px-4 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition duration-300 shadow-md cursor-pointer relative text-sm sm:text-base" />
+						<SubmitButtonSpinner
+							value="Logout"
+							className="py-2 px-4 rounded-lg bg-linear-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold shadow-lg shadow-red-900/20 transition-all duration-300 cursor-pointer text-sm sm:text-base border border-white/10"
+						/>
 					</form>
 				</div>
 
-				<form action={handleAddTodo} className="flex flex-col sm:flex-row gap-2">
-					<input type="text" name="task" placeholder="Add new task..." className="w-full sm:grow p-3 rounded-lg bg-white/50 border border-gray-300/50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required />
+				<form action={handleAddTodo} className="flex flex-col sm:flex-row gap-3">
+					<input
+						type="text"
+						name="task"
+						placeholder="Add new task..."
+						className="w-full sm:grow p-3.5 rounded-xl bg-black/40 border border-slate-700/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all duration-200 shadow-inner"
+						required
+					/>
 
-					<SubmitButtonSpinner value="Add" className="w-full sm:w-auto py-3 px-5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-300 shadow-md cursor-pointer relative text-sm sm:text-base" />
+					<SubmitButtonSpinner
+						value="Add"
+						className="w-full sm:w-auto py-3 px-6 rounded-xl bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/40 transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer border border-white/10"
+					/>
 				</form>
+
 				{todos.length > 0 ? (
-					<div className="text-center shrink-0 text-xs text-gray-500 font-mono" title="Time remaining today">
-						Time remaining: {remainingTime}
+					<div className="text-center shrink-0 text-xs text-slate-400 font-mono bg-white/5 py-1 rounded-md border border-white/5" title="Time remaining today">
+						Time remaining: <span className="text-cyan-400 font-semibold">{remainingTime}</span>
 					</div>
 				) : null}
-				<div className="flex w-full gap-2 p-1 bg-gray-500/10 rounded-lg">
+
+				<div className="flex w-full gap-2 p-1 bg-black/40 rounded-xl border border-white/5">
 					<button
 						type="button"
 						onClick={() => setFilter("all")}
-						className={`flex-1 py-2 rounded-md text-sm font-medium transition-all
-            			${filter === "all" ? "bg-white shadow-md text-indigo-700" : "text-gray-600 hover:bg-white/50"}`}>
+						className={`flex-1 py-2 rounded-lg text-sm font-medium border border-transparent
+                        ${filter === "all" ? "bg-linear-to-r from-slate-700 to-slate-600 text-white shadow-md border border-white/10" : "text-slate-500 hover:text-slate-300 hover:bg-white/5"}`}>
 						All
 					</button>
 					<button
 						type="button"
 						onClick={() => setFilter("not done")}
-						className={`flex-1 py-2 rounded-md text-sm font-medium transition-all
-            			${filter === "not done" ? "bg-white shadow-md text-indigo-700" : "text-gray-600 hover:bg-white/50"}`}>
+						className={`flex-1 py-2 rounded-lg text-sm font-medium border border-transparent
+                        ${filter === "not done" ? "bg-linear-to-r from-cyan-900/80 to-blue-900/80 text-cyan-100 shadow-md border border-white/10" : "text-slate-500 hover:text-slate-300 hover:bg-white/5"}`}>
 						Not Done
 					</button>
 					<button
 						type="button"
 						onClick={() => setFilter("done")}
-						className={`flex-1 py-2 rounded-md text-sm font-medium transition-all
-            			${filter === "done" ? "bg-white shadow-md text-indigo-700" : "text-gray-600 hover:bg-white/50"}`}>
+						className={`flex-1 py-2 rounded-lg text-sm font-medium border border-transparent
+                        ${filter === "done" ? "bg-linear-to-r from-purple-900/80 to-pink-900/80 text-purple-100 shadow-md border border-white/10" : "text-slate-500 hover:text-slate-300 hover:bg-white/5"}`}>
 						Done
 					</button>
 				</div>
-				<ul className="space-y-3 flex-1 min-h-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [mask:linear-gradient(to_bottom,black_95%,transparent_100%)]">
+
+				<ul className="space-y-3 flex-1 min-h-0 overflow-y-auto no-scrollbar [mask:linear-gradient(to_bottom,black_90%,transparent_100%)] pr-1">
 					{loading ? (
-						<li className="flex justify-center items-center h-full">
-							<Atom color={["#32cd32", "#327fcd", "#cd32cd", "#cd8032"]} speedPlus={1} size="large" text="" textColor="" easing="ease-in-out" />
+						<li className="flex justify-center items-center h-full bg-">
+							<TrophySpin color={["#9810fa", "#00b8db", "#e60076", "#372aac"]} />
 						</li>
 					) : (
 						<TaskList todos={filteredTodos} setTodos={setTodos}></TaskList>

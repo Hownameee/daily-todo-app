@@ -1,12 +1,10 @@
 import { useCallback, type Dispatch, type SetStateAction } from "react";
-import { RemoveTaskRequestSchema, TaskSchema, type Task } from "../gen/todos_pb";
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf";
-import { ResponseSchema, Status } from "../gen/response_pb";
+import { RemoveTaskRequestSchema, TaskSchema, type Task } from "src/lib/gen/todos_pb";
+import { ResponseSchema, Status } from "src/lib/gen/response_pb";
 import { MemoTaskItem } from "./Task";
 
 export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos: Dispatch<SetStateAction<Task[]>> }) {
-	// console.log("tasklist-re-render");
-
 	const handleDeleteTodo = useCallback(
 		async (uuid: string) => {
 			try {
@@ -86,6 +84,15 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 	);
 
 	return (
-		<>{todos.length > 0 ? todos.map((todo, index) => <MemoTaskItem key={todo.uuid} todo={todo} index={index} onDelete={handleDeleteTodo} onToggle={handleToggleComplete} onUpdate={handleUpdateTodo} />) : <li className="text-gray-500 font-medium text-center opacity-50">Nothing here yet!</li>}</>
+		<ul className="space-y-3 pb-2">
+			{todos.length > 0 ? (
+				todos.map((todo, index) => <MemoTaskItem key={todo.uuid} todo={todo} index={index} onDelete={handleDeleteTodo} onToggle={handleToggleComplete} onUpdate={handleUpdateTodo} />)
+			) : (
+				<li className="flex flex-col items-center justify-center py-10 text-slate-500 opacity-60">
+					<div className="w-12 h-12 mb-3 border-2 border-slate-700 rounded-full border-dashed animate-spin-slow"></div>
+					<span className="font-medium italic">Nothing here yet!</span>
+				</li>
+			)}
+		</ul>
 	);
 }

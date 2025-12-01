@@ -16,10 +16,3 @@ export async function AuthLoader({ request }: { request: Request }) {
 	const result = fromBinary(HomeResponseSchema, new Uint8Array(data));
 	return result.username;
 }
-
-export async function AnimationLoader() {
-	await new Promise((resolve) => {
-		setTimeout(resolve, 150);
-	});
-	return null;
-}

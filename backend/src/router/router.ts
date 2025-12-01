@@ -2,10 +2,16 @@ import express from "express";
 import { Controllers } from "../controllers/controllers";
 import { Views } from "../views/view";
 import cookieParser from "cookie-parser";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
+
+const limiter = rateLimit({ windowMs: 2 * 60 * 1000, max: 100, standardHeaders: true, legacyHeaders: false, message: "Too many requests, please try again after 2 minutes" });
 
 export default function serveRoute(controller: Controllers, view: Views) {
 	const router = express();
 
+	router.use(limiter);
+	router.use(compression());
 	router.use(express.raw({ type: "application/x-protobuf" }));
 	router.use(cookieParser());
 	router.use(express.static("src/views/gen"));

@@ -5,12 +5,12 @@ A **Monorepo** full-stack application for managing daily tasks.
 
 ## 🛠 Tech Stack
 
-| Domain | Technologies |
-| :--- | :--- |
-| **Frontend** | React (Vite), TailwindCSS, Zod |
-| **Backend** | Express.js, MongoDB Atlas |
-| **Security** | Argon2 (Hashing), JWT (HTTP-only Cookies) |
-| **Core** | **Protobuf** (Schema), **TurboRepo** (Build System), Docker |
+| Domain       | Technologies                                                |
+| :----------- | :---------------------------------------------------------- |
+| **Frontend** | React (Vite), TailwindCSS, Zod                              |
+| **Backend**  | Express.js, MongoDB Atlas                                   |
+| **Security** | Argon2 (Hashing), JWT (HTTP-only Cookies)                   |
+| **Core**     | **Protobuf** (Schema), **TurboRepo** (Build System), Docker |
 
 ## 📂 Structure
 
@@ -40,7 +40,7 @@ A **Monorepo** full-stack application for managing daily tasks.
 
 1. Setup & Run
 
-``` bash
+```bash
 # Clone & Install
 git clone <your-repo-url>
 cd daily-todo-app
