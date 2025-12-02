@@ -53,5 +53,9 @@ export default function serveRoute(controller: Controllers, view: Views) {
 		(req, res) => controller.handleUpdateTask(req, res),
 	);
 
+	router.get("/{*splat}", (req, res) => {
+		view.handleSPA(req, res);
+	});
+
 	return router;
 }

@@ -5,6 +5,7 @@ import Background from "src/pages/Background";
 import Signup from "src/pages/Signup/Signup";
 import Layout from "src/pages/Layout";
 import { AuthLoader } from "./loader";
+import NotFound from "src/pages/NotFound/NotFound";
 
 export const router = createBrowserRouter([
 	{
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
 			{ Component: Layout, loader: AuthLoader, children: [{ index: true, Component: Home }] },
 			{ path: "/login", Component: Login },
 			{ path: "/signup", Component: Signup },
+			{ path: "*", Component: NotFound },
 		],
 	},
 ]);
