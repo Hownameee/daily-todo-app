@@ -76,8 +76,7 @@ export class Models {
 	async updateTaskByUsername(username: string, todo: Task): Promise<boolean> {
 		const collection: Collection<UserDB> = this.db.collection("user");
 		const res = await collection.updateOne({ username: username, "tasks.uuid": new UUID(todo.uuid) }, { $set: { "tasks.$.title": todo.title, "tasks.$.completed": todo.completed } });
-
-		return res.modifiedCount === 1;
+		return res.matchedCount === 1 || res.modifiedCount === 1;
 	}
 }
 

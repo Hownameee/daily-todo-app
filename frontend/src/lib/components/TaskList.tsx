@@ -65,7 +65,6 @@ export default function TaskList({ todos, setTodos }: { todos: Task[]; setTodos:
 				const res = await fetch("/api/todos", { headers: { "Content-Type": "application/x-protobuf" }, credentials: "include", method: "PUT", body: bytes });
 				const data = await res.arrayBuffer();
 				const status = fromBinary(ResponseSchema, new Uint8Array(data));
-
 				if (status.status == Status.SUCCESS) {
 					setTodos((prevTodos) =>
 						prevTodos.map((e) => {
