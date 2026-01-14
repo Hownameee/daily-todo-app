@@ -1,11 +1,11 @@
 import { create, fromBinary, toBinary } from "@bufbuild/protobuf";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { Status } from "src/lib/gen/response_pb";
-import { AddTaskRequestSchema, AddTaskResponseSchema, TaskListResponseSchema, type Task } from "src/lib/gen/todos_pb";
-import TaskList from "@components/TaskList";
+import TodoList from "@components/TodoList";
 import SubmitButtonSpinner from "@components/SubmitButtonSpinner";
 import { TrophySpin } from "react-loading-indicators";
+import { ResponseSchema } from "src/lib/gen/response_pb";
+import { AddTodoRequestSchema, AddTodoResponseSchema, TodoListResponseSchema, type Todo } from "src/lib/gen/todo_pb";
 
 type FilterState = "all" | "not done" | "done";
 
@@ -28,7 +28,7 @@ function Home() {
 
 	const navigate = useNavigate();
 
-	const [todos, setTodos] = useState<Task[]>([]);
+	const [todos, setTodos] = useState<Todo[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [filter, setFilter] = useState<FilterState>("all");
 	const [remainingTime, setRemainingTime] = useState(calculateRemainingTime());
@@ -43,23 +43,25 @@ function Home() {
 	};
 
 	const handleAddTodo = async (formData: FormData) => {
-		const taskForm = formData.get("task")?.toString();
+		const todoForm = formData.get("todo")?.toString();
 
-		if (!taskForm || taskForm.trim() === "") {
+		if (!todoForm || todoForm.trim() === "") {
 			return;
 		}
 		try {
-			const task = create(AddTaskRequestSchema, { title: taskForm });
-			const bytes = toBinary(AddTaskRequestSchema, task);
-			const res = await fetch("/api/todos", { headers: { "Content-Type": "application/x-protobuf" }, method: "POST", credentials: "include", body: bytes });
-
+			const todo = create(AddTodoRequestSchema, { title: todoForm });
+			const bytes = toBinary(AddTodoRequestSchema, todo);
+			const res = await fetch("/api/todo", { headers: { "Content-Type": "application/x-protobuf" }, method: "POST", credentials: "include", body: bytes });
 			const data = await res.arrayBuffer();
-			const newTask = fromBinary(AddTaskResponseSchema, new Uint8Array(data));
-			if (newTask.status == Status.SUCCESS && newTask.newTask) {
-				setTodos([newTask.newTask, ...todos]);
-			} else if (newTask.status == Status.FAILED) {
-				alert(newTask.message);
-				return;
+
+			if (res.status === 201) {
+				const newTodo = fromBinary(AddTodoResponseSchema, new Uint8Array(data));
+				if (newTodo.newTodo) {
+					setTodos([newTodo.newTodo, ...todos]);
+				}
+			} else {
+				const result = fromBinary(ResponseSchema, new Uint8Array(data));
+				alert(result.message);
 			}
 		} catch {
 			alert("Internal server error, please try again.");
@@ -69,9 +71,9 @@ function Home() {
 	useEffect(() => {
 		const fetchTodos = async () => {
 			try {
-				const res = await fetch("/api/todos", { credentials: "include" });
+				const res = await fetch("/api/todo", { credentials: "include" });
 				const data = await res.arrayBuffer();
-				const todos = fromBinary(TaskListResponseSchema, new Uint8Array(data));
+				const todos = fromBinary(TodoListResponseSchema, new Uint8Array(data));
 				setLoading(false);
 				setTodos(todos.list);
 			} catch {
@@ -92,10 +94,10 @@ function Home() {
 
 	const filteredTodos = useMemo(() => {
 		if (filter === "done") {
-			return todos.filter((task) => task.completed);
+			return todos.filter((todo) => todo.completed);
 		}
 		if (filter === "not done") {
-			return todos.filter((task) => !task.completed);
+			return todos.filter((todo) => !todo.completed);
 		}
 		return todos;
 	}, [todos, filter]);
@@ -116,8 +118,8 @@ function Home() {
 				<form action={handleAddTodo} className="flex flex-col sm:flex-row gap-3">
 					<input
 						type="text"
-						name="task"
-						placeholder="Add new task..."
+						name="todo"
+						placeholder="Add new todo..."
 						className="w-full sm:grow p-3.5 rounded-xl bg-black/40 border border-slate-700/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all duration-200 shadow-inner"
 						required
 					/>
@@ -164,7 +166,7 @@ function Home() {
 							<TrophySpin color={["#9810fa", "#00b8db", "#e60076", "#372aac"]} />
 						</li>
 					) : (
-						<TaskList todos={filteredTodos} setTodos={setTodos}></TaskList>
+						<TodoList todos={filteredTodos} setTodos={setTodos}></TodoList>
 					)}
 				</ul>
 			</div>

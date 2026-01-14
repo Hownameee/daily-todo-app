@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router";
 import { LoginRequestSchema, type LoginRequest } from "src/lib/gen/auth_pb";
-import { ResponseSchema, Status } from "src/lib/gen/response_pb";
+import { ResponseSchema } from "src/lib/gen/response_pb";
 import { loginSchema, type LoginFormData } from "src/lib/schema/LoginSchema";
 
 export default function Login() {
@@ -28,15 +28,17 @@ export default function Login() {
 		const login: LoginRequest = create(LoginRequestSchema, { username: data.username, password: data.password });
 		const bytes = toBinary(LoginRequestSchema, login);
 		try {
-			const res = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/x-protobuf" }, body: bytes });
-			const data = await res.arrayBuffer();
-			const result = fromBinary(ResponseSchema, new Uint8Array(data));
+			const res = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/x-protobuf" }, body: bytes });
 
-			if (result.status == Status.FAILED) {
+			if (res.status == 404) {
+				setErrorMessage("Username or password is not correct, please try again!");
+			} else if (!res.ok) {
+				const data = await res.arrayBuffer();
+				const result = fromBinary(ResponseSchema, new Uint8Array(data));
 				setErrorMessage(result.message);
-				return;
+			} else {
+				navigate("/", { replace: true });
 			}
-			navigate("/", { replace: true });
 		} catch {
 			setErrorMessage("Cannot connect to server, please try again.");
 		}

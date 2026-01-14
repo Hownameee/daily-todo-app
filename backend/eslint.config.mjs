@@ -29,6 +29,7 @@ export default defineConfig([
 			"dot-notation": "error",
 			"init-declarations": ["error", "always"],
 			"no-console": ["error", { allow: ["warn", "error"] }],
+			"@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
 		},
 	},
 	tseslint.configs.recommended,

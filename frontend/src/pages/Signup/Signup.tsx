@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router";
 import { SignupRequestSchema, type SignupRequest } from "src/lib/gen/auth_pb";
-import { ResponseSchema, Status } from "src/lib/gen/response_pb";
+import { ResponseSchema } from "src/lib/gen/response_pb";
 import { signupSchema, type SignupFormData } from "src/lib/schema/SignupSchema";
 
 export default function Signup() {
@@ -28,16 +28,14 @@ export default function Signup() {
 		const bytes = toBinary(SignupRequestSchema, signup);
 
 		try {
-			const res = await fetch("/api/signup", { method: "POST", headers: { "Content-Type": "application/x-protobuf" }, body: bytes });
-
-			const data = await res.arrayBuffer();
-			const result = fromBinary(ResponseSchema, new Uint8Array(data));
-
-			if (result.status == Status.FAILED) {
+			const res = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/x-protobuf" }, body: bytes });
+			if (!res.ok) {
+				const data = await res.arrayBuffer();
+				const result = fromBinary(ResponseSchema, new Uint8Array(data));
 				setErrorMessage(result.message);
 				return;
 			}
-			navigate("/", { replace: true });
+			navigate("/login", { replace: true });
 		} catch {
 			setErrorMessage("Cannot connect to server, please try again.");
 		}

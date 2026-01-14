@@ -1,31 +1,23 @@
-import openDB, { Models } from "./models/models";
-import { Controllers } from "./controllers/controllers";
-import serveRoute from "./router/router";
-import express from "express";
-import Config from "./config/config";
-import { Views } from "./views/view";
+import app from "./app";
+import config from "./config/config";
+import { disconnectDB } from "./db/db";
 
-let models: Models | null = null;
-
-async function main() {
-	const config: Config = new Config();
-	models = await openDB(config.MongoUri);
-	const views: Views = new Views("src/views/gen");
-	const controllers = new Controllers(models, config);
-	const router = serveRoute(controllers, views);
-	const app = express();
-
-	app.use(router);
-
+const server = app.listen(config.PORT, () => {
 	// eslint-disable-next-line no-console
-	app.listen(config.PORT, () => console.log("Backend server listen on port", config.PORT));
-}
+	console.log("Backend server listen on port", config.PORT);
+});
 
-main();
-
+// graceful shutdown
 process.on("SIGINT", async () => {
-	if (models) {
-		await models.close();
-	}
+	// eslint-disable-next-line no-console
+	console.log("SIGINT received. Shutting down...");
+
+	server.close(() => {
+		// eslint-disable-next-line no-console
+		console.log("Backend server closed.");
+	});
+
+	await disconnectDB();
+
 	process.exit(0);
 });

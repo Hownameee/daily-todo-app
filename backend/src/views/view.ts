@@ -1,14 +1,8 @@
 import path from "path";
 import { Request, Response } from "express";
 
-export class Views {
-	private staticDir: string;
+const staticDir: string = path.resolve("src/views/gen");
 
-	constructor(pathDir: string) {
-		this.staticDir = path.resolve(pathDir);
-	}
-
-	handleSPA(_: Request, res: Response) {
-		res.sendFile(path.join(this.staticDir, "index.html"));
-	}
+export default function handleSPA(_: Request, res: Response) {
+	res.sendFile(path.join(staticDir, "index.html"));
 }

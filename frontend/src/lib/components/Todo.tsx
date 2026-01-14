@@ -1,11 +1,11 @@
 import { memo, useState } from "react";
-import type { Task } from "../gen/todos_pb";
 import SubmitButtonSpinner from "./SubmitButtonSpinner";
 import { CheckCircleIcon, MoreVerticalIcon } from "./ReactIcons";
 import { PencilIcon, TrashIcon } from "@assets/index";
-type TodoItemProps = { todo: Task; index: number; onDelete: (uuid: string) => Promise<void>; onToggle: (todo: Task) => Promise<void>; onUpdate: (todo: Task, newTitle: string) => Promise<void> };
+import type { Todo } from "../gen/todo_pb";
+type TodoItemProps = { todo: Todo; index: number; onDelete: (id: string) => Promise<void>; onToggle: (todo: Todo) => Promise<void>; onUpdate: (todo: Todo, newTitle: string) => Promise<void> };
 
-function TaskItem({ todo, index, onDelete, onToggle, onUpdate }: TodoItemProps) {
+function TodoItem({ todo, index, onDelete, onToggle, onUpdate }: TodoItemProps) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editingTodoTitle, setEditingTodoTitle] = useState(todo.title);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -69,11 +69,11 @@ function TaskItem({ todo, index, onDelete, onToggle, onUpdate }: TodoItemProps) 
 				<div className="absolute right-0 top-[calc(100%+5px)] z-50 w-40 bg-slate-900 border border-white/10 rounded-xl shadow-2xl backdrop-blur-xl ring-1 ring-black/50 overflow-hidden animate-fade-in-up origin-top-right" onMouseLeave={() => setIsMenuOpen(false)}>
 					<button onClick={handleStartEdit} className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition-colors border-b border-white/5">
 						<PencilIcon />
-						Edit Task
+						Edit Todo
 					</button>
-					<button onClick={() => onDelete(todo.uuid)} className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors">
+					<button onClick={() => onDelete(todo.id)} className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors">
 						<TrashIcon />
-						Delete Task
+						Delete Todo
 					</button>
 				</div>
 			)}
@@ -81,4 +81,4 @@ function TaskItem({ todo, index, onDelete, onToggle, onUpdate }: TodoItemProps) 
 	);
 }
 
-export const MemoTaskItem = memo(TaskItem);
+export const MemoTodoItem = memo(TodoItem);

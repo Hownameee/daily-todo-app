@@ -1,0 +1,24 @@
+syntax = "proto3";
+package todo;
+
+message Todo {
+    string id = 1;
+    string title = 2;
+    bool completed = 3;
+}
+
+message TodoListResponse {
+    repeated Todo list = 3;
+}
+
+message AddTodoRequest {
+    string title = 1;
+}
+
+message AddTodoResponse {
+    Todo newTodo = 1;
+}
+
+message RemoveTodoRequest {
+    string id = 1;
+}
