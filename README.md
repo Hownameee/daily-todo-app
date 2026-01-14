@@ -18,22 +18,31 @@ A **Monorepo** full-stack application for managing daily tasks.
 .
 ├── backend                 # Express API Server
 │   ├── src
-│   │   ├── config          # Environment config
-│   │   ├── controllers     # Request handlers (Auth, Todo, Home)
-│   │   ├── models          # Mongo models
-│   │   ├── router          # API Routes definition
-│   │   ├── views           # View logic
-│   │   └── server.ts       # Entry point
+│   │   ├── config          # Environment configuration
+│   │   ├── controllers     # Request handlers & generated proto types
+│   │   ├── db              # Mongoose connection setup
+│   │   ├── middlewares     # Error handling, Auth, & Proto parsing
+│   │   ├── models          # Mongoose data models & interfaces
+│   │   ├── router          # Express route definitions
+│   │   ├── schema          # Zod validation schemas
+│   │   ├── services        # Business logic & DB abstraction layers
+│   │   ├── views           # Static file serving logic
+│   │   ├── app.ts          # Express app setup
+│   │   └── server.ts       # Server entry point
 │   └── package.json
 ├── frontend                # React Client
 │   ├── src
-│   │   ├── lib             # Shared components & schemas
+│   │   ├── assets          # Global styles & images
+│   │   ├── lib
+│   │   │   ├── components  # Reusable UI components
+│   │   │   ├── Context     # React Context (Theme)
+│   │   │   └── schema      # Zod validation schemas
 │   │   ├── pages           # Route pages (Home, Login, Signup)
 │   │   └── router          # React Router configuration
 │   └── vite.config.ts
-├── protobuf/        # .proto definitions
-├── turbo.json       # Monorepo pipeline
-└── Dockerfile       # Container setup
+├── protobuf/               # Protocol Buffer definitions (.proto)
+├── turbo.json              # Monorepo pipeline configuration
+└── Dockerfile              # Container deployment setup
 ```
 
 ## ⚡ Quick Start
