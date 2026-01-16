@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { LoginRequest, SignupRequest } from "./gen/auth_pb";
 import userService from "../services/user";
 import authService from "../services/auth";
@@ -23,15 +23,15 @@ const authController = {
 		return res.notFound();
 	},
 
-	handleSignup: async (req: Request, res: Response) => {
-		const data: SignupRequest = req.body;
-		const user = await userService.findByUsername(data.username);
-		if (user) {
-			return res.conflict("Username already exists, please try another one!");
+	handleSignup: async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const data: SignupRequest = req.body;
+			const hashPassword = await authService.hashPassword(data.password);
+			await userService.create(data.username, hashPassword);
+			return res.created(null);
+		} catch (error) {
+			return next(error);
 		}
-		const hashPassword = await authService.hashPassword(data.password);
-		await userService.create(data.username, hashPassword);
-		return res.created(null);
 	},
 };
 
