@@ -1,5 +1,7 @@
 # Daily Todo App 📝
 
+> **🔴 Live Demo:** [daily-todo.app](https://daily-todo.apn.leapcell.app)
+
 A **Monorepo** full-stack application for managing daily tasks.
 **Key Feature:** All tasks automatically reset at midnight (00:00).
 
