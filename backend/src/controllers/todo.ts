@@ -8,7 +8,7 @@ import { Todo as TodoDB } from "../models/user";
 const todoController = {
 	handleGetTodoList: async (req: Request, res: Response) => {
 		const username = res.locals.user;
-		const user = await userService.findByUsername(username);
+		const user = await userService.findAllByUsername(username);
 		if (user) {
 			const protoTodos = user.todos.map((todo: TodoDB) => create(TodoSchema, { id: todo._id.toString(), title: todo.title ?? undefined, completed: todo.completed ?? undefined }));
 			const responseMessage = toProto(TodoListResponseSchema, create(TodoListResponseSchema, { list: protoTodos }));

@@ -1,8 +1,13 @@
 import UserModel from "../models/user";
 
 const userService = {
-	findByUsername: async function (username: string) {
+	findAllByUsername: async function (username: string) {
 		const res = await UserModel.findOne({ username: username });
+		return res;
+	},
+
+	findByUsername: async function (username: string) {
+		const res = await UserModel.findOne({ username }).select("username password");
 		return res;
 	},
 
