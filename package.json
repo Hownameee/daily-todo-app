@@ -1,16 +1,18 @@
 {
-	"name": "messenger",
+	"name": "daily-todo-app",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
 	"packageManager": "npm@10.9.2",
 	"scripts": {
-		"dev": "buf generate && turbo run dev",
+		"dev": "npm run gen && turbo run dev",
 		"format": "prettier --write .",
 		"lint": "turbo run lint",
-		"build": "buf generate && turbo run build",
-		"preview": "npm run build && turbo run preview",
-		"prepare": "husky && npm run lint && npm run format",
+		"build": "turbo run build",
+		"gen" : "buf generate",
+		"preview": "turbo run preview",
+		"start": "cd backend/dist && node src/server.js",
+		"prepare": "husky",
 		"pre-commit": "npm run lint && npm run format"
 	},
 	"keywords": [],

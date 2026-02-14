@@ -9,7 +9,8 @@
 		"dev": "nodemon --watch src --exec ts-node src/server.ts",
 		"lint": "eslint .",
 		"build": "rimraf dist && tsc -b && copyfiles -u 1 src/views/gen/**/* dist/src && copyfiles -u 1 src/views/gen/* dist/src && copyfiles -u 1 src/models/schema.sql dist/src && copyfiles -u 1 assets/* dist/assets",
-		"preview": "cd dist && node src/server.js"
+		"preview": "cd dist && node src/server.js",
+		"start": "cd dist && node src/server.js"
 	},
 	"keywords": [],
 	"author": "",
