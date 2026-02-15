@@ -2,6 +2,7 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY . .
+RUN npm install -g npm@latest
 RUN npm i --ignore-scripts
 RUN npm run gen
 RUN npm run build
@@ -11,6 +12,7 @@ FROM node:22-alpine
 WORKDIR /app
 COPY --from=build /app/backend/dist ./dist
 COPY --from=build /app/backend/package.json .
+RUN npm install -g npm@latest
 RUN npm install --omit=dev --ignore-scripts
 
 EXPOSE 4000
