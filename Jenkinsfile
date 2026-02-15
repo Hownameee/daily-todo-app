@@ -5,6 +5,8 @@ pipeline {
         stage('Security Scan') {
             environment {
                 SNYK_TOKEN = credentials('snyk-token-id')
+                SONAR_TOKEN = credentials('sonarqube-token-id')
+                SONAR_HOST_URL = credentials('sonarqube-host-url')
             }
             steps {
                 script {
@@ -26,6 +28,18 @@ pipeline {
                             snyk/snyk:node \
                             -c "snyk test --severity-threshold=high --all-projects"
                     """
+                    
+                    echo '--- 3. SonarQube: Scanning Code Quality ---'
+                    sh """
+                        docker run --rm \
+                            -e SONAR_HOST_URL=${SONAR_HOST_URL} \
+                            -e SONAR_TOKEN=${SONAR_TOKEN} \
+                            -v "${WORKSPACE}":/usr/src \
+                            sonarsource/sonar-scanner-cli \
+                            -Dsonar.projectKey=daily-todo-app \
+                            -Dsonar.sources=. \
+                            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/.turbo/**
+                    """
                 }
             }
         }
@@ -41,20 +55,20 @@ pipeline {
             stages {
                 stage('Install & Generate') {
                     steps {
-                        echo '--- 3. NPM: Installing Dependencies ---'
+                        echo '--- 4. NPM: Installing Dependencies ---'
                         sh 'npm install --ignore-scripts'
 
-                        echo '--- 4. Buf: Generating Protobuf ---'
+                        echo '--- 5. Buf: Generating Protobuf ---'
                         sh 'npx buf generate'
                     }
                 }
 
                 stage('Lint & Build') {
                     steps {
-                        echo '--- 5. Turbo: Running Linter ---'
+                        echo '--- 6. Turbo: Running Linter ---'
                         sh 'npx turbo run lint'
 
-                        echo '--- 6. Turbo: Building Project ---'
+                        echo '--- 7. Turbo: Building Project ---'
                         sh 'npx turbo run build'
                     }
                 }
@@ -69,10 +83,10 @@ pipeline {
             }
             steps {
                 script {
-                    echo '--- 7. Docker: Building Container Image ---'
+                    echo '--- 8. Docker: Building Container Image ---'
                     sh "docker build -t ${APP_IMAGE} ."
                     
-                    echo '--- 8. Snyk: Scanning Container Image ---'
+                    echo '--- 9. Snyk: Scanning Container Image ---'
                     sh """
                         docker run --rm \
                             -e SNYK_TOKEN=${SNYK_TOKEN} \
@@ -83,10 +97,10 @@ pipeline {
                             snyk container test ${APP_IMAGE} --file=Dockerfile
                     """
 
-                    echo '--- 9. Docker: Cleaning up old container ---'
+                    echo '--- 10. Docker: Cleaning up old container ---'
                     sh "docker rm -f daily-todo-container || true"
 
-                    echo '--- 10. Docker: Deploying Application ---'
+                    echo '--- 11. Docker: Deploying Application ---'
                     sh "docker run -dp 3000:4000 --name daily-todo-container -e MONGOURI=${MONGODB_URI} ${APP_IMAGE}"
                 }
             }
