@@ -9,10 +9,12 @@ import authRouter from "./router/auth";
 import todoRouter from "./router/todo";
 import restResponse from "./middlewares/restResponse";
 import errorHandler from "./middlewares/errorHandler";
+import helmet from "helmet";
 
 connectDB();
 
 const app = express();
+app.use(helmet());
 const limiter = rateLimit({ windowMs: 2 * 60 * 1000, max: 100, standardHeaders: true, legacyHeaders: false, message: "Too many requests, please try again after 2 minutes" });
 
 app.use(limiter);

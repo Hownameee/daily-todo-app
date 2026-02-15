@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const passwordError = "Password must be 8–100 characters long and contain lowercase, uppercase, number, and special character.";
+const errorMsg = "Password must be 8–100 characters long and contain lowercase, uppercase, number, and special character.";
 
 export const signupSchema = z
 	.object({
@@ -16,12 +16,12 @@ export const signupSchema = z
 
 		password: z
 			.string()
-			.min(8, passwordError)
-			.max(100, passwordError)
-			.regex(/[a-z]/, passwordError)
-			.regex(/[A-Z]/, passwordError)
-			.regex(/[0-9]/, passwordError)
-			.regex(/[!@#$%^&*(),.?":{}|<>]/, passwordError),
+			.min(8, errorMsg)
+			.max(100, errorMsg)
+			.regex(/[a-z]/, errorMsg)
+			.regex(/[A-Z]/, errorMsg)
+			.regex(/[0-9]/, errorMsg)
+			.regex(/[!@#$%^&*(),.?":{}|<>]/, errorMsg),
 		confirmPassword: z.string(),
 	})
 	.refine((data) => data.password === data.confirmPassword, { message: "Passwords do not match", path: ["confirmPassword"] });
