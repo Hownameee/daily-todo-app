@@ -59,7 +59,7 @@ pipeline {
             environment {
                 SNYK_TOKEN  = credentials('snyk-token-id')
                 MONGODB_URI = credentials('MONGODB_URI')
-                APP_IMAGE   = "daily-todo-app:${env.BUILD_ID}"
+                APP_IMAGE   = "daily-todo-app:latest"
             }
             steps {
                 script {
