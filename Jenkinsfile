@@ -13,10 +13,10 @@ pipeline {
                         docker run --rm \
                             -v "${WORKSPACE}":/code \
                             ghcr.io/gitleaks/gitleaks:latest \
-                            detect --source /code --verbose --redact
+                            detect --source /code --verbose --redact --no-color
                     """
 
-                    echo '--- 2. Snyk: Checking Dependencies & Code ---'
+                    echo '--- 2. Snyk: Checking Dependencies ---'
                     sh """
                         docker run --rm \
                             --entrypoint /bin/bash \
@@ -41,14 +41,20 @@ pipeline {
             stages {
                 stage('Install & Generate') {
                     steps {
+                        echo '--- 3. NPM: Installing Dependencies ---'
                         sh 'npm install --ignore-scripts'
+
+                        echo '--- 4. Buf: Generating Protobuf ---'
                         sh 'npx buf generate'
                     }
                 }
 
                 stage('Lint & Build') {
                     steps {
+                        echo '--- 5. Turbo: Running Linter ---'
                         sh 'npx turbo run lint'
+
+                        echo '--- 6. Turbo: Building Project ---'
                         sh 'npx turbo run build'
                     }
                 }
@@ -63,9 +69,10 @@ pipeline {
             }
             steps {
                 script {
-                    echo '--- 3. Build & Scan Container ---'
+                    echo '--- 7. Docker: Building Container Image ---'
                     sh "docker build -t ${APP_IMAGE} ."
                     
+                    echo '--- 8. Snyk: Scanning Container Image ---'
                     sh """
                         docker run --rm \
                             -e SNYK_TOKEN=${SNYK_TOKEN} \
@@ -76,9 +83,11 @@ pipeline {
                             snyk container test ${APP_IMAGE} --file=Dockerfile
                     """
 
-                    echo '--- 4. Final Deploy ---'
+                    echo '--- 9. Docker: Cleaning up old container ---'
                     sh "docker rm -f daily-todo-container || true"
-                    sh "docker run -dp 3000:4000 --name daily-todo-container -e MONGOURI=$MONGODB_URI ${APP_IMAGE}"
+
+                    echo '--- 10. Docker: Deploying Application ---'
+                    sh "docker run -dp 3000:4000 --name daily-todo-container -e MONGOURI=${MONGODB_URI} ${APP_IMAGE}"
                 }
             }
         }
