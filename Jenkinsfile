@@ -47,7 +47,7 @@ pipeline {
         stage('Node Build') {
             agent {
                 docker {
-                    image 'node:22'
+                    image 'node:22-alpine'
                     reuseNode true
                     args '-u root'
                 }
@@ -104,6 +104,13 @@ pipeline {
                     sh "docker run -dp 3000:4000 --name daily-todo-container -e MONGOURI=${MONGODB_URI} ${APP_IMAGE}"
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo '--- 12. Docker: Clean Up ---'
+            sh "docker image prune -af" 
         }
     }
 }
