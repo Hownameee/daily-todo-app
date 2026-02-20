@@ -1,16 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
 import { register } from "../prometheus/prometheus";
+import config from "../config/config";
 
 const metricsRouter = express.Router();
 
 metricsRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
-	const allowedIPs = ["127.0.0.1", "::1", "::ffff:127.0.0.1"];
+	const authHeader = req.headers.authorization;
 
-	if (!req.ip) {
-		return next();
-	}
-
-	if (!allowedIPs.includes(req.ip)) {
+	if (authHeader !== `Bearer ${config.PROMETHEUS_TOKEN}`) {
 		return next();
 	}
 

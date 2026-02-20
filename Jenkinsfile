@@ -58,7 +58,8 @@ pipeline {
         stage('Container Scan & Deploy') {
             environment {
                 MONGODB_URI = credentials('MONGODB_URI')
-                APP_IMAGE   = 'daily-todo-app:latest'
+                APP_IMAGE = 'daily-todo-app:latest'
+                PROMETHEUS_TOKEN = credentials('PROMETHEUS_TOKEN')
             }
             steps {
                 script {
@@ -69,7 +70,7 @@ pipeline {
                     sh 'docker rm -f daily-todo-container || true'
 
                     echo '--- 8. Docker: Deploying Application ---'
-                    sh "docker run -dp 3000:4000 --name daily-todo-container -e MONGOURI=${MONGODB_URI} ${APP_IMAGE}"
+                    sh "docker run -dp 3000:4000 --name daily-todo-container -e MONGOURI=${MONGODB_URI} -e PROMETHEUS_TOKEN=${PROMETHEUS_TOKEN}  ${APP_IMAGE}"
                 }
             }
         }

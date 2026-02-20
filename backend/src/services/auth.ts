@@ -9,12 +9,12 @@ interface MyJwtPayLoad extends JwtPayload {
 
 const authService = {
 	generateToken: function (username: string) {
-		const token = jwt.sign({ username: username }, config.jwtSecret, { expiresIn: "24h" });
+		const token = jwt.sign({ username: username }, config.JWT_SECRET, { expiresIn: "24h" });
 		return token;
 	},
 
 	validateToken: function (token: string) {
-		const payload: MyJwtPayLoad = jwt.verify(token, config.jwtSecret) as MyJwtPayLoad;
+		const payload: MyJwtPayLoad = jwt.verify(token, config.JWT_SECRET) as MyJwtPayLoad;
 		return payload;
 	},
 

@@ -2,7 +2,7 @@ import { connect, disconnect } from "mongoose";
 import config from "../config/config";
 
 export function connectDB() {
-	connect(config.MongoUri, { dbName: "daily_todo" }).then(() => {
+	connect(config.MONGO_URI, { dbName: "daily_todo" }).then(() => {
 		// eslint-disable-next-line no-console
 		console.log("Connected to database");
 	});
