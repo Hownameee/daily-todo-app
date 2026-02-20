@@ -10,6 +10,8 @@ import todoRouter from "./router/todo";
 import restResponse from "./middlewares/restResponse";
 import errorHandler from "./middlewares/errorHandler";
 import helmet from "helmet";
+import metricsMiddleware from "./middlewares/metrics";
+import metricsRouter from "./router/metrics";
 
 connectDB();
 
@@ -22,6 +24,7 @@ app.use(compression());
 app.use(express.raw({ type: "application/x-protobuf" }));
 app.use(cookieParser());
 app.use(express.static("src/views/gen"));
+app.use(metricsMiddleware);
 app.use(restResponse);
 
 const apiRouter = express.Router();
@@ -31,6 +34,7 @@ apiRouter.use("/auth", authRouter);
 apiRouter.use("/todo", todoRouter);
 
 app.use("/api", apiRouter);
+app.use("/metrics", metricsRouter);
 
 app.get("/{*splat}", (req, res) => {
 	handleSPA(req, res);

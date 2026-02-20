@@ -22,7 +22,7 @@ export default defineConfig([
 			"no-use-before-define": "error",
 			"no-useless-assignment": "error",
 			"block-scoped-var": "error",
-			camelcase: "error",
+			camelcase: "warn",
 			"capitalized-comments": ["error", "never"],
 			"consistent-return": "error",
 			curly: "error",
